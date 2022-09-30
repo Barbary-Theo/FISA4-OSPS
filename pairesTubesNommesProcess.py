@@ -3,7 +3,7 @@ import pairetubesnommesprocessalancerenpremier as first
 import pairetubesnommesprocessalancerensecond as second
 
 
-def createFifo(path):
+def mkfifo(path):
     # NE PAS FAIRE, C'EST DÉGEU, MAIS ON A PAS LE CHOIX DU COUP ON LE FAIT
     try:
         os.mkfifo(path, 0o0600)
@@ -17,8 +17,8 @@ def prog():
     pathtube1 = "/tmp/tubenommeprincipalsecond"
     pathtube2 = "/tmp/tubenommesecondprincipal"
 
-    createFifo(pathtube1)
-    createFifo(pathtube2)
+    mkfifo(pathtube1)
+    mkfifo(pathtube2)
 
     try:
         if pid := os.fork() < 0:
