@@ -21,7 +21,9 @@ def prog():
     mkfifo(pathtube2)
 
     try:
-        if pid := os.fork() < 0:
+        pid = os.fork()
+
+        if pid < 0:
             print("It's not possible to fork() !")
         elif pid == 0:
             print('Création des tubes...')
