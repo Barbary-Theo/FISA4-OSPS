@@ -33,7 +33,7 @@ if newpid < 0:
     print("fork() impossible")
     os.abort()
 if newpid == 0:
-    os.execlp("ipcs", "ipcs", "-m");
+    os.execlp("ipcs", "ipcs", "-m")
 else:
     os.wait()
 
