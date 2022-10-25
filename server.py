@@ -39,12 +39,12 @@ def main():
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            shm_segment1.buf[:7] = bytearray([74, 73, 72, 71, 70, 69, 68])
+            shm_segment1.buf[:7] = bytearray([71, 70, 69, 68, 67, 66, 65])
+            print("cooc")
             fifo1.write("PING\n")
             fifo1.flush()
 
             print("Principale -> msg : " + fifo2.readline())
-
 
         else:
             # SERVER SECONDAIRE
@@ -53,11 +53,8 @@ def main():
             fifo1 = open(pathtube1, "r")
             fifo2 = open(pathtube2, "w")
 
-            print('Contenu du segment mémoire partagée :', bytes(shm_segment2.buf[:7]))
-
             fifo2.write("PONG\n")
             print("Secondaire -> msg : " + fifo1.readline())
-
 
     except Exception as e:
         print(to_red(e.__str__()))
