@@ -15,8 +15,9 @@ from multiprocessing import shared_memory
 #
 # PROBLÈMES : Qui gère les droits ? Pourquoi ipcs ne "voit" pas le segment ?
 def shm():
-    shm_segment1 = shared_memory.SharedMemory(name='012345', create=True, size=10)
-    print('Nom du segment mémoire partagée :', shm_segment1.name)
+    shared_memory.SharedMemory(name='shm_osps', create=True, size=10)
+    '''shm_segment1 = shared_memory.SharedMemory(name='shm_osps', create=True, size=10)
+    #print('Nom du segment mémoire partagée :', shm_segment1.name)
 
     # Accès + écriture de données via le premier accès au segment mémoire partagée
     print('Taille du segment mémoire partagée en octets via premier accès :', len(shm_segment1.buf))
@@ -41,4 +42,4 @@ def shm():
 
     shm_segment2.close()
     shm_segment1.close()
-    shm_segment1.unlink()
+    shm_segment1.unlink()'''
