@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e0c44a4a-5504-47f3-b2b9-481375df785c" name="Changes" comment="" />
+    <list default="true" id="e0c44a4a-5504-47f3-b2b9-481375df785c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/fisa4-osps.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/fisa4-osps.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <list id="5bb6aec6-94fc-498d-964e-9b3ff6b5c3aa" name="Changes by theobabrary" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +37,9 @@
     "WebServerToolWindowFactoryState": "false",
     "dart.analysis.tool.window.visible": "false",
     "last_opened_file_path": "/Users/martinthibaut/Documents/FISA/S7/OSPS/PROJECT/fisa4-osps",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
