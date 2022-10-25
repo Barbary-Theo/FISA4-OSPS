@@ -51,7 +51,6 @@ def main():
 
                 print(to_red("Principale -> msg : ") + fifo2.readline().replace("\n", " "))
 
-
         else:
             # SERVER SECONDAIRE
             shm_segment2 = shared_memory.SharedMemory("shm_osps")
@@ -61,6 +60,8 @@ def main():
 
                 fifo1 = open(pathtube1, "r")
                 fifo2 = open(pathtube2, "w")
+
+                shm_segment2.buf[:7] = bytearray([71, 70, 69, 68, 67, 66, 65])
 
                 fifo2.write("Au revoir\n")
                 sleep(randint(0, 5))
