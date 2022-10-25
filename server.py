@@ -50,7 +50,8 @@ def main():
             #fifo1.close()
 
             # print('Processus principal en attente de réception de messages...')
-            for line in fifo2:
+            print(fifo2.read())
+            for line in fifo2.read():
                 print("Message recu : " + line)
 
             # print('Fermeture du tube2...')
