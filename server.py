@@ -46,11 +46,11 @@ def main():
                 shm_segment1.buf[:7] = bytearray([71, 70, 69, 68, 67, 66, 65])
 
                 fifo1.write("Bonjour\n")
+                sleep(randint(0, 5))
                 fifo1.flush()
 
                 print(to_red("Principale -> msg : ") + fifo2.readline().replace("\n", " "))
 
-                sleep(randint(0, 5))
 
         else:
             # SERVER SECONDAIRE
@@ -63,10 +63,10 @@ def main():
                 fifo2 = open(pathtube2, "w")
 
                 fifo2.write("Au revoir\n")
-                fifo2.flush()
-                print(to_red("Secondaire -> msg : ") + fifo1.readline().replace("\n", " "))
-
                 sleep(randint(0, 5))
+                fifo2.flush()
+
+                print(to_red("Secondaire -> msg : ") + fifo1.readline().replace("\n", " "))
 
     except Exception as e:
         print(to_red(e.__str__()))
