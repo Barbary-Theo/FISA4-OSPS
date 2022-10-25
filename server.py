@@ -33,57 +33,31 @@ def main():
         if pid < 0:
             print("It's not possible to fork() !")
         elif pid == 0:
+            # SERVER PRINCIPALE
             shm_segment1 = shared_memory.SharedMemory("shm_osps")
-            print(shm_segment1.name)
-            # print('Overture du tube1 en écriture...')
-            fifo1 = open(pathtube1, "w")
 
-            # print('Overture du tube2 en lecture...')
+            fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            # print('Processus principal prêt pour échanger des messages...')
-            # print('Écriture dans le tube1...')
-            shm_segment1.buf[:7] = bytearray([66, 111, 110, 106, 111, 117, 114])
+            shm_segment1.buf[:7] = bytearray([74, 73, 72, 71, 70, 69, 68])
             fifo1.write("PING\n")
+            fifo1.flush()
 
-            # print('Fermeture du tube1...')
-            #fifo1.close()
+            print("Principale -> msg : " + fifo2.readline())
 
-            # print('Processus principal en attente de réception de messages...')
-            print(fifo2.read())
-            for line in fifo2.read():
-                print("Message recu : " + line)
 
-            # print('Fermeture du tube2...')
-            #fifo2.close()
-
-            # print('Destruction des tubes...')
-            #os.unlink(pathtube1)
-            #os.unlink(pathtube2)
         else:
+            # SERVER SECONDAIRE
             shm_segment2 = shared_memory.SharedMemory("shm_osps")
-            # print('Overture du tube1 en lecture...')
-            fifo1 = open(pathtube1, "r")
 
-            # print('Overture du tube2 en écriture...')
+            fifo1 = open(pathtube1, "r")
             fifo2 = open(pathtube2, "w")
 
-            # print('Processus secondaire prêt pour échanger des messages...')
+            print('Contenu du segment mémoire partagée :', bytes(shm_segment2.buf[:7]))
 
-            # print('Processus secondaire en attente de réception de messages...')
-
-            for line in fifo1:
-                print("Message recu : " + line)
-
-            # print('Fermeture du tube1...')
-            #fifo1.close()
-
-            # print('Écriture dans le tube2...')
-            print("Contenue dans le server secondaire : ", bytes(shm_segment2.buf[:10]))
             fifo2.write("PONG\n")
+            print("Secondaire -> msg : " + fifo1.readline())
 
-            # print('Fermeture du tube2...')
-            #fifo2.close()
 
     except Exception as e:
         print(to_red(e.__str__()))
