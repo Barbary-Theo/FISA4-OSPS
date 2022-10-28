@@ -6,6 +6,7 @@ from datetime import datetime
 
 import config
 
+
 def mkfifo(path):
     try:
         os.mkfifo(path, 0o0600)
@@ -38,7 +39,9 @@ def main_server(pathtube1, pathtube2):
             print("Serveur 1 a écrit")
             fifo1.write(str(len(text_to_write)) + "\n")
 
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(len(text_to_write)) + "\n")
+            write_in_file(config.LOG_FILENAME, "a+",
+                          get_prefix_log() + "Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(
+                              len(text_to_write)) + "\n")
             write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             fifo1.flush()
@@ -48,7 +51,7 @@ def main_server(pathtube1, pathtube2):
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 read '" + text_read + "'\n")
             write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + "up")
 
-            print("Serveur 1 à lu : ",  text_read)
+            print("Serveur 1 à lu : ", text_read)
 
         except Exception as e:
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 looks like down")
@@ -56,7 +59,6 @@ def main_server(pathtube1, pathtube2):
 
 
 def secondary_server(pathtube1, pathtube2):
-
     shm_segment2 = shared_memory.SharedMemory("shm_osps")
     rand = randint
 
@@ -73,7 +75,8 @@ def secondary_server(pathtube1, pathtube2):
             print("Serveur 2 à lu la taille : ", length)
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
+            write_in_file(config.LOG_FILENAME, "a+",
+                          get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
             write_in_file(config.SERVER_TWO_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             print('Contenu du segment mémoire partagée en octets via second accès :', shared_memory_text)
