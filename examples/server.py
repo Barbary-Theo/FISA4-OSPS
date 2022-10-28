@@ -1,14 +1,8 @@
-import os, sys
-import random
+import os
 from multiprocessing import shared_memory
 from time import sleep
 from random import randint
-
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-
-from shm import shm
-
+from datetime import datetime
 
 def mkfifo(path):
     try:
@@ -17,11 +11,11 @@ def mkfifo(path):
         pass
 
 
+def get_prefix_log():
+    return "[" + datetime.now().strftime("%X") + "] "
+
 def main_server(pathtube1, pathtube2):
     shm_segment1 = shared_memory.SharedMemory("shm_osps")
-    rand = randint
-
-    random_text = ["mot", "sus", "BEANSS", "Python", "cheval"]
 
     while True:
 
@@ -36,15 +30,15 @@ def main_server(pathtube1, pathtube2):
             print("Serveur 1 a écrit")
             fifo1.write(str(len(text_to_write)) + "\n")
 
-            with open("watchdog.log", "a+") as log:
-                log.write("Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(len(text_to_write)) + "\n")
+            with open("servers.log", "a+") as log:
+                log.write(get_prefix_log() + "Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(len(text_to_write)) + "\n")
 
             fifo1.flush()
 
             text_read = fifo2.readline().replace("\n", "")
 
-            with open("watchdog.log", "a+") as log:
-                log.write("Server 1 read '" + text_read + "'\n")
+            with open("servers.log", "a+") as log:
+                log.write(get_prefix_log() + "Server 1 read '" + text_read + "'\n")
 
             print("Serveur 1 à lu : ",  text_read)
 
@@ -70,8 +64,8 @@ def secondary_server(pathtube1, pathtube2):
             print("Serveur 2 à lu la taille : ", length)
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
-            with open("watchdog.log", "a+") as log:
-                log.write("Server 2 read '" + str(shared_memory_text) + "'\n")
+            with open("servers.log", "a+") as log:
+                log.write(get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
 
             print('Contenu du segment mémoire partagée en octets via second accès :', shared_memory_text)
 
@@ -80,8 +74,8 @@ def secondary_server(pathtube1, pathtube2):
             print("Serveur 2 a écrit")
             fifo2.write("I read\n")
 
-            with open("watchdog.log", "a+") as log:
-                log.write("Server 2 wrote 'I read'\n")
+            with open("servers.log", "a+") as log:
+                log.write(get_prefix_log() + "Server 2 wrote 'I read'\n")
 
             fifo2.flush()
 
@@ -100,11 +94,11 @@ def main():
 
     try:
         print("Création du segment mémoire partagée")
-        shm()
+        shared_memory.SharedMemory(name='shm_osps', create=True, size=10)
     except Exception as e:
         print(to_red(e.__str__()))
 
-    with open("watchdog.log", "w") as log:
+    with open("servers.log", "w") as log:
         log.write("")
 
     try:
