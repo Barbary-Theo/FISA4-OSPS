@@ -40,16 +40,19 @@ def main():
 
             while True:
 
-                fifo1 = open(pathtube1, "w")
-                fifo2 = open(pathtube2, "r")
+                try:
+                    fifo1 = open(pathtube1, "w")
+                    fifo2 = open(pathtube2, "r")
 
-                shm_segment1.buf[:7] = bytearray([71, 70, 69, 68, 67, 66, 65])
+                    shm_segment1.buf[:7] = bytearray([71, 70, 69, 68, 67, 66, 65])
 
-                fifo1.write("Bonjour\n")
-                sleep(randint(0, 5))
-                fifo1.flush()
+                    fifo1.write("Bonjour\n")
+                    sleep(randint(0, 5))
+                    fifo1.flush()
 
-                print(to_red("Principale -> msg : ") + fifo2.readline().replace("\n", " "))
+                    print(to_red("Principale -> msg : ") + fifo2.readline().replace("\n", " "))
+                except Exception as e:
+                    break
 
         else:
             # SERVER SECONDAIRE
@@ -58,16 +61,20 @@ def main():
 
             while True:
 
-                fifo1 = open(pathtube1, "r")
-                fifo2 = open(pathtube2, "w")
+                try:
+                    fifo1 = open(pathtube1, "r")
+                    fifo2 = open(pathtube2, "w")
 
-                shm_segment2.buf[:7] = bytearray([71, 70, 69, 68, 67, 66, 65])
+                    shm_segment2.buf[:7] = bytearray([71, 70, 69, 68, 67, 66, 65])
 
-                fifo2.write("Au revoir\n")
-                sleep(randint(0, 5))
-                fifo2.flush()
+                    fifo2.write("Au revoir\n")
+                    sleep(randint(0, 5))
+                    fifo2.flush()
 
-                print(to_red("Secondaire -> msg : ") + fifo1.readline().replace("\n", " "))
+                    print(to_red("Secondaire -> msg : ") + fifo1.readline().replace("\n", " "))
+
+                except Exception as e:
+                    break
 
     except Exception as e:
         print(to_red(e.__str__()))
