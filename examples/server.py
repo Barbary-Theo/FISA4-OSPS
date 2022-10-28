@@ -4,6 +4,8 @@ from time import sleep
 from random import randint
 from datetime import datetime
 
+import config
+
 def mkfifo(path):
     try:
         os.mkfifo(path, 0o0600)
@@ -13,6 +15,12 @@ def mkfifo(path):
 
 def get_prefix_log():
     return "[" + datetime.now().strftime("%X") + "] "
+
+
+def write_in_file(file_name, mode, text):
+    with open("files/" + file_name, mode) as state_file:
+        state_file.write(text)
+
 
 def main_server(pathtube1, pathtube2):
     shm_segment1 = shared_memory.SharedMemory("shm_osps")
@@ -30,20 +38,21 @@ def main_server(pathtube1, pathtube2):
             print("Serveur 1 a écrit")
             fifo1.write(str(len(text_to_write)) + "\n")
 
-            with open("servers.log", "a+") as log:
-                log.write(get_prefix_log() + "Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(len(text_to_write)) + "\n")
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(len(text_to_write)) + "\n")
+            write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             fifo1.flush()
 
             text_read = fifo2.readline().replace("\n", "")
 
-            with open("servers.log", "a+") as log:
-                log.write(get_prefix_log() + "Server 1 read '" + text_read + "'\n")
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 read '" + text_read + "'\n")
+            write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             print("Serveur 1 à lu : ",  text_read)
 
         except Exception as e:
-            break
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 looks like down")
+            write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + " down")
 
 
 def secondary_server(pathtube1, pathtube2):
@@ -64,23 +73,24 @@ def secondary_server(pathtube1, pathtube2):
             print("Serveur 2 à lu la taille : ", length)
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
-            with open("servers.log", "a+") as log:
-                log.write(get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
+            write_in_file(config.SERVER_TWO_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             print('Contenu du segment mémoire partagée en octets via second accès :', shared_memory_text)
 
-            sleep(randint(0, 5))
+            sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
 
             print("Serveur 2 a écrit")
             fifo2.write("I read\n")
 
-            with open("servers.log", "a+") as log:
-                log.write(get_prefix_log() + "Server 2 wrote 'I read'\n")
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 wrote 'I read'\n")
+            write_in_file(config.SERVER_TWO_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             fifo2.flush()
 
-        except Exception as e:
-            break
+        except Exception:
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 looks like down")
+            write_in_file(config.SERVER_TWO_STATE_FILENAME, "w", get_prefix_log() + " down")
 
 
 def main():
@@ -98,7 +108,7 @@ def main():
     except Exception as e:
         print(to_red(e.__str__()))
 
-    with open("servers.log", "w") as log:
+    with open("files/servers.log", "w") as log:
         log.write("")
 
     try:
