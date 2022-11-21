@@ -3,11 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="e0c44a4a-5504-47f3-b2b9-481375df785c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/fisa4-osps.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/fisa4-osps.iml" afterDir="false" />
-<<<<<<< HEAD
-=======
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
->>>>>>> e564bf1 ((automatic commit by a script) start bracnh)
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/watchdog.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/watchdog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/servers.log" beforeDir="false" afterPath="$PROJECT_DIR$/files/servers.log" afterDir="false" />
     </list>
     <list id="5bb6aec6-94fc-498d-964e-9b3ff6b5c3aa" name="Changes by theobabrary" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,19 +35,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "/Users/martinthibaut/Documents/FISA/S7/OSPS/PROJECT/fisa4-osps",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/martinthibaut/Documents/FISA/S7/OSPS/PROJECT/fisa4-osps&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -165,7 +166,12 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/fisa4_osps$pairetubesnommesprocessalancerensecond.coverage" NAME="pairetubesnommesprocessalancerensecond Coverage Results" MODIFIED="1664526818194" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/fisa4_osps$server_socket.coverage" NAME="server-socket Coverage Results" MODIFIED="1669028179290" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/fisa4_osps$client_socket.coverage" NAME="client-socket Coverage Results" MODIFIED="1669028188114" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/fisa4_osps$server.coverage" NAME="server Coverage Results" MODIFIED="1669043801288" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/fisa4_osps$watchdog.coverage" NAME="watchdog Coverage Results" MODIFIED="1669043842207" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/fisa4_osps$pairetubesnommesprocessalancerenpremier.coverage" NAME="pairetubesnommesprocessalancerenpremier Coverage Results" MODIFIED="1664526759287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/fisa4_osps$pairesTubesNommesProcess.coverage" NAME="pairesTubesNommesProcess Coverage Results" MODIFIED="1664528088771" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/fisa4_osps$server_test.coverage" NAME="server-test Coverage Results" MODIFIED="1669026618623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
 </project>

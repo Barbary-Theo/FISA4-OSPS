@@ -1,17 +1,22 @@
 import os
+import threading
+import socket as soc
+import config
+
 from multiprocessing import shared_memory
 from time import sleep
 from random import randint
 from datetime import datetime
+from rich import console
 
-import config
+console = console.Console()
 
 
 def mkfifo(path):
     try:
         os.mkfifo(path, 0o0600)
-    except:
-        pass
+    except Exception as e:
+        console.print(e.__str__(), style="bold red")
 
 
 def get_prefix_log():
@@ -19,7 +24,7 @@ def get_prefix_log():
 
 
 def write_in_file(file_name, mode, text):
-    with open("files/" + file_name, mode) as state_file:
+    with open(file_name, mode) as state_file:
         state_file.write(text)
 
 
@@ -32,30 +37,28 @@ def main_server(pathtube1, pathtube2):
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            text_to_write = input("Server 1 have to write -> ")
+            console.print("Serveur 1 doit écrire ->", style="blue")
+            text_to_write = input()
 
             shm_segment1.buf[:len(text_to_write)] = bytearray([ord(value) for value in text_to_write])
 
-            print("Serveur 1 a écrit")
+            console.print("Serveur 1 a écrit " + text_to_write, style="blue")
             fifo1.write(str(len(text_to_write)) + "\n")
 
             write_in_file(config.LOG_FILENAME, "a+",
                           get_prefix_log() + "Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(
                               len(text_to_write)) + "\n")
-            write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             fifo1.flush()
 
             text_read = fifo2.readline().replace("\n", "")
 
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 read '" + text_read + "'\n")
-            write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + "up")
 
-            print("Serveur 1 à lu : ", text_read)
+            console.print("Serveur 1 a lu : " + text_read, style="blue")
 
         except Exception as e:
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 looks like down")
-            write_in_file(config.SERVER_ONE_STATE_FILENAME, "w", get_prefix_log() + " down")
 
 
 def secondary_server(pathtube1, pathtube2):
@@ -72,28 +75,47 @@ def secondary_server(pathtube1, pathtube2):
 
             length = fifo1.readline().replace("\n", "")
 
-            print("Serveur 2 à lu la taille : ", length)
+            console.print("Serveur 2 a lu la taille : " + length, style="green")
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
             write_in_file(config.LOG_FILENAME, "a+",
                           get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
-            write_in_file(config.SERVER_TWO_STATE_FILENAME, "w", get_prefix_log() + "up")
 
-            print('Contenu du segment mémoire partagée en octets via second accès :', shared_memory_text)
+            console.print("Contenu du segment mémoire partagée en octets via second accès : " + shared_memory_text.__str__(), style="green")
 
             sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
 
-            print("Serveur 2 a écrit")
+            console.print("Serveur 2 a écrit", style="green")
             fifo2.write("I read\n")
 
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 wrote 'I read'\n")
-            write_in_file(config.SERVER_TWO_STATE_FILENAME, "w", get_prefix_log() + "up")
 
             fifo2.flush()
 
         except Exception:
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 looks like down")
-            write_in_file(config.SERVER_TWO_STATE_FILENAME, "w", get_prefix_log() + " down")
+
+
+def launch_socket(args):
+
+    s: soc.socket = args
+
+    while True:
+        print("oui")
+
+        s.listen()
+        conn, addr = s.accept()
+        with conn:
+            console.print("Connected by " + addr, style="bold red")
+
+            data = conn.recv(1024)
+            if data:
+                conn.sendall(data)
+
+
+def join(worker):
+    while worker.is_alive():
+        worker.join(0.5)
 
 
 def main():
@@ -106,27 +128,42 @@ def main():
     mkfifo(pathtube2)
 
     try:
-        print("Création du segment mémoire partagée")
+        console.print("Création du segment mémoire partagée", style="yellow")
         shared_memory.SharedMemory(name='shm_osps', create=True, size=10)
     except Exception as e:
-        print(to_red(e.__str__()))
+        console.print(e.__str__(), style="bold red")
 
-    with open("files/servers.log", "w") as log:
+    with open("../files/servers.log", "w") as log:
         log.write("")
 
     try:
         pid = os.fork()
         if pid < 0:
-            print("⚠️ Error during fork ⚠️")
+            console.print("⚠️ Error during fork ⚠️", style="bold red")
 
         elif pid == 0:
-            main_server(pathtube1, pathtube2)
+            with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
+                s.bind((config.SERVER_ONE_IP, config.SERVER_ONE_PORT))
+
+                worker1 = threading.Thread(target=launch_socket, args=[s])
+                worker1.daemon = False
+
+                worker1.start()
+
+                main_server(pathtube1, pathtube2)
 
         else:
-            secondary_server(pathtube1, pathtube2)
+            with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
+                s.bind((config.SERVER_TWO_IP, config.SERVER_TWO_PORT))
+
+                worker2 = threading.Thread(target=launch_socket, args=[s])
+                worker2.daemon = False
+                worker2.start()
+
+                secondary_server(pathtube1, pathtube2)
 
     except Exception as e:
-        print(to_red(e.__str__()))
+        console.print(e.__str__(), style="bold red")
 
 
 if __name__ == "__main__":

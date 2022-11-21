@@ -1,6 +1,11 @@
 
 SERVER_TWO_INTERVAL_CHECKING = 2
 
-LOG_FILENAME = "servers.log"
-SERVER_ONE_STATE_FILENAME = "state_server_one.log"
-SERVER_TWO_STATE_FILENAME = "state_server_two.log"
+LOG_FILENAME = "../files/servers.log"
+
+SERVER_ONE_IP = "localhost"
+SERVER_TWO_IP = "localhost"
+
+SERVER_ONE_PORT = 2001
+SERVER_TWO_PORT = 2002
+
