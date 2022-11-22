@@ -12,6 +12,7 @@ from rich import console
 
 console = console.Console()
 style_error = "bold red"
+error_on_a_server = False
 
 
 def mkfifo(path):
@@ -60,6 +61,7 @@ def main_server(pathtube1, pathtube2):
 
         except Exception:
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 looks like down\n")
+            break
 
 
 def secondary_server(pathtube1, pathtube2):
@@ -94,43 +96,43 @@ def secondary_server(pathtube1, pathtube2):
 
         except Exception:
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 looks like down\n")
+            break
 
 
 def launch_socket(ip, port, server_number):
-    i = 0
-    with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
-        s.bind((ip, port))
-        s.listen()
-        conn, addr = s.accept()
-        console.print("\n Watchdog server " + server_number + " connected by " + addr.__str__(), style=style_error)
+    global error_on_a_server
 
-        while True:
-            try:
-                data = conn.recv(1024)
-                if data:
-                    if server_number == "1":
-                        i += 1
-                    if i > 3:
-                        conn.close()
-                        s.close()
-                        return
-                    write_in_file(config.LOG_FILENAME, "a+",
-                                  get_prefix_log() + "Server " + server_number + " pinged by watchdog\n")
+    try:
+        with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
+            s.bind((ip, port))
+            s.listen()
+            conn, addr = s.accept()
+            console.print("\n Watchdog server " + server_number + " connected by " + addr.__str__(), style=style_error)
 
-                    if bytes(data).decode() == config.MESSAGE_PING_ERROR:
-                       os._exit(0)
+            while True:
+                try:
+                    data = conn.recv(1024)
+                    if data:
+                        write_in_file(config.LOG_FILENAME, "a+",
+                                      get_prefix_log() + "Server " + server_number + " pinged by watchdog\n")
 
-                    conn.sendall(str("Server " + server_number + " up").encode())
+                        if error_on_a_server or bytes(data).decode() == config.MESSAGE_PING_ERROR:
+                           os._exit(0)
 
-            except Exception as e:
-                console.print(e.__str__(), style=style_error)
-                conn.close()
-                s.detach()
-                s.close()
-                break
+                        conn.sendall(str("Server " + server_number + " up").encode())
+
+                except Exception as e:
+                    console.print(e.__str__(), style=style_error)
+                    conn.close()
+                    s.detach()
+                    s.close()
+                    break
+    except Exception as e:
+        console.print(e.__str__(), style=style_error)
 
 
 def main():
+    global error_on_a_server
     pathtube1 = "/tmp/tubenommeprincipalsecond"
     pathtube2 = "/tmp/tubenommesecondprincipal"
 
@@ -153,20 +155,24 @@ def main():
             console.print("⚠️ Error during fork ⚠️", style=style_error)
 
         elif pid == 0:
-
             worker1 = threading.Thread(target=launch_socket, args=[config.SERVER_ONE_IP, config.SERVER_ONE_PORT, "1"])
             worker1.daemon = True
             worker1.start()
 
             main_server(pathtube1, pathtube2)
 
-        else:
+            # Si on passe ici ça veut dire qu'il y a eu un problème dans le traitement serveur
+            error_on_a_server = True
 
+        else:
             worker2 = threading.Thread(target=launch_socket, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
             worker2.daemon = True
             worker2.start()
 
             secondary_server(pathtube1, pathtube2)
+
+            # Si on passe ici ça veut dire qu'il y a eu un problème dans le traitement serveur
+            error_on_a_server = True
 
     except Exception as e:
         console.print(e.__str__(), style=style_error)
