@@ -5,11 +5,8 @@
       <excludeFolder url="file://$MODULE_DIR$/v" />
       <excludeFolder url="file://$MODULE_DIR$/vv" />
     </content>
-<<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Python 3.10" jdkType="Python SDK" />
-=======
     <orderEntry type="inheritedJdk" />
->>>>>>> e564bf1 ((automatic commit by a script) start bracnh)
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

@@ -10,13 +10,14 @@ from datetime import datetime
 from rich import console
 
 console = console.Console()
+style_error = "bold red"
 
 
 def mkfifo(path):
     try:
         os.mkfifo(path, 0o0600)
     except Exception as e:
-        console.print(e.__str__(), style="bold red")
+        console.print(e.__str__(), style=style_error)
 
 
 def get_prefix_log():
@@ -37,8 +38,7 @@ def main_server(pathtube1, pathtube2):
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            console.print("Serveur 1 doit écrire ->", style="blue")
-            text_to_write = input()
+            text_to_write = input("Serveur 1 doit écrire -> ")
 
             shm_segment1.buf[:len(text_to_write)] = bytearray([ord(value) for value in text_to_write])
 
@@ -57,15 +57,12 @@ def main_server(pathtube1, pathtube2):
 
             console.print("Serveur 1 a lu : " + text_read, style="blue")
 
-        except Exception as e:
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 looks like down")
+        except Exception:
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 looks like down\n")
 
 
 def secondary_server(pathtube1, pathtube2):
     shm_segment2 = shared_memory.SharedMemory("shm_osps")
-    rand = randint
-
-    last_message = ""
 
     while True:
 
@@ -92,34 +89,33 @@ def secondary_server(pathtube1, pathtube2):
 
             fifo2.flush()
 
-        except Exception:
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 looks like down")
+        except  Exception:
+            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 looks like down\n")
 
 
-def launch_socket(args):
+def launch_socket(ip, port, server_number):
 
-    s: soc.socket = args
-
-    while True:
-        print("oui")
-
+    with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
+        s.bind((ip, port))
         s.listen()
         conn, addr = s.accept()
-        with conn:
-            console.print("Connected by " + addr, style="bold red")
+        console.print("Watchdog connected by " + addr.__str__(), style=style_error)
 
-            data = conn.recv(1024)
-            if data:
-                conn.sendall(data)
+        while True:
+            try:
+                data = conn.recv(1024)
+                if data:
+                    write_in_file(config.LOG_FILENAME,  "a+", get_prefix_log() + "Server " + server_number + " pinged by watchdog\n")
+                    conn.sendall("up".encode())
 
-
-def join(worker):
-    while worker.is_alive():
-        worker.join(0.5)
+            except Exception as e:
+                console.print(e.__str__(), style=style_error)
+                conn.close()
+                s.close()
+                break
 
 
 def main():
-    to_red = lambda text: "\033[382{}{}{}m{} \033[382255255255m".format(255, 0, 0, text)
 
     pathtube1 = "/tmp/tubenommeprincipalsecond"
     pathtube2 = "/tmp/tubenommesecondprincipal"
@@ -131,7 +127,7 @@ def main():
         console.print("Création du segment mémoire partagée", style="yellow")
         shared_memory.SharedMemory(name='shm_osps', create=True, size=10)
     except Exception as e:
-        console.print(e.__str__(), style="bold red")
+        console.print(e.__str__(), style=style_error)
 
     with open("../files/servers.log", "w") as log:
         log.write("")
@@ -139,31 +135,26 @@ def main():
     try:
         pid = os.fork()
         if pid < 0:
-            console.print("⚠️ Error during fork ⚠️", style="bold red")
+            console.print("⚠️ Error during fork ⚠️", style=style_error)
 
         elif pid == 0:
-            with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
-                s.bind((config.SERVER_ONE_IP, config.SERVER_ONE_PORT))
 
-                worker1 = threading.Thread(target=launch_socket, args=[s])
-                worker1.daemon = False
+            worker1 = threading.Thread(target=launch_socket, args=[config.SERVER_ONE_IP, config.SERVER_ONE_PORT, "1"])
+            worker1.daemon = False
+            worker1.start()
 
-                worker1.start()
-
-                main_server(pathtube1, pathtube2)
+            main_server(pathtube1, pathtube2)
 
         else:
-            with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
-                s.bind((config.SERVER_TWO_IP, config.SERVER_TWO_PORT))
 
-                worker2 = threading.Thread(target=launch_socket, args=[s])
-                worker2.daemon = False
-                worker2.start()
+           worker2 = threading.Thread(target=launch_socket, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
+           worker2.daemon = False
+           worker2.start()
 
-                secondary_server(pathtube1, pathtube2)
+           secondary_server(pathtube1, pathtube2)
 
     except Exception as e:
-        console.print(e.__str__(), style="bold red")
+        console.print(e.__str__(), style=style_error)
 
 
 if __name__ == "__main__":
