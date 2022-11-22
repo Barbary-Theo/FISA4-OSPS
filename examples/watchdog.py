@@ -1,4 +1,5 @@
 import socket
+import sys
 import time
 import threading
 
@@ -8,8 +9,11 @@ import config
 console = console.Console()
 
 error_communication_text = "Impossible de se connecter au serveur "
+error_on_a_server = False
+
 
 def watchdog_server_one(ip, port):
+    global error_on_a_server
 
     try:
         s_serv_one = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,11 +22,16 @@ def watchdog_server_one(ip, port):
         while True:
 
             try:
-                s_serv_one.sendall("Hello, world".encode())
+                s_serv_one.sendall(config.MESSAGE_PING_ERROR.encode() if error_on_a_server else "ALIVE".encode())
+
+                if error_on_a_server:
+                    os._exit(0)
+
                 data = s_serv_one.recv(1024)
 
                 if data.decode().__str__() == "":
                     console.print(error_communication_text + "1", style="red")
+                    error_on_a_server = True
                     break
                 else:
                     print("Received data -> " + data.decode().__str__())
@@ -31,12 +40,15 @@ def watchdog_server_one(ip, port):
 
             except Exception:
                 console.print(error_communication_text + "1", style="red")
+                error_on_a_server = True
                 break
     except Exception:
         console.print("Impossible de se connecter au socket server 1", style="red")
+        error_on_a_server = True
 
 
 def watchdog_server_two(ip, port):
+    global error_on_a_server
 
     try:
         s_serv_two = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -45,11 +57,16 @@ def watchdog_server_two(ip, port):
         while True:
 
             try:
-                s_serv_two.sendall("Hello, world".encode())
+                s_serv_two.sendall(config.MESSAGE_PING_ERROR.encode() if error_on_a_server else "ALIVE".encode())
+
+                if error_on_a_server:
+                    os._exit(0)
+
                 data = s_serv_two.recv(1024)
 
                 if data.decode().__str__() == "":
                     console.print(error_communication_text + "2", style="red")
+                    error_on_a_server = True
                     break
                 else:
                     print("Received data -> " + data.decode().__str__())
@@ -58,9 +75,11 @@ def watchdog_server_two(ip, port):
 
             except Exception:
                 console.print(error_communication_text + "2", style="red")
+                error_on_a_server = True
                 break
     except Exception:
         console.print("Impossible de se connecter au socket server 2", style="red")
+        error_on_a_server = True
 
 
 def join(worker):

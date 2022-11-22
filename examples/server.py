@@ -1,4 +1,5 @@
 import os
+import sys
 import threading
 import socket as soc
 import config
@@ -96,6 +97,7 @@ def secondary_server(pathtube1, pathtube2):
 
 
 def launch_socket(ip, port, server_number):
+    i = 0
     with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
         s.bind((ip, port))
         s.listen()
@@ -106,13 +108,24 @@ def launch_socket(ip, port, server_number):
             try:
                 data = conn.recv(1024)
                 if data:
+                    if server_number == "1":
+                        i += 1
+                    if i > 3:
+                        conn.close()
+                        s.close()
+                        return
                     write_in_file(config.LOG_FILENAME, "a+",
                                   get_prefix_log() + "Server " + server_number + " pinged by watchdog\n")
+
+                    if bytes(data).decode() == config.MESSAGE_PING_ERROR:
+                       os._exit(0)
+
                     conn.sendall(str("Server " + server_number + " up").encode())
 
             except Exception as e:
                 console.print(e.__str__(), style=style_error)
                 conn.close()
+                s.detach()
                 s.close()
                 break
 

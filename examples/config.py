@@ -1,5 +1,6 @@
 
 SERVER_TWO_INTERVAL_CHECKING = 2
+MESSAGE_PING_ERROR = "STOP"
 
 LOG_FILENAME = "../files/servers.log"
 
