@@ -78,7 +78,9 @@ def secondary_server(pathtube1, pathtube2):
             write_in_file(config.LOG_FILENAME, "a+",
                           get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
 
-            console.print("Contenu du segment mémoire partagée en octets via second accès : " + shared_memory_text.__str__(), style="green")
+            console.print(
+                "Contenu du segment mémoire partagée en octets via second accès : " + shared_memory_text.__str__(),
+                style="green")
 
             sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
 
@@ -94,19 +96,19 @@ def secondary_server(pathtube1, pathtube2):
 
 
 def launch_socket(ip, port, server_number):
-
     with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
         s.bind((ip, port))
         s.listen()
         conn, addr = s.accept()
-        console.print("Watchdog connected by " + addr.__str__(), style=style_error)
+        console.print("Watchdog server " + server_number + "connected by " + addr.__str__(), style=style_error)
 
         while True:
             try:
                 data = conn.recv(1024)
                 if data:
-                    write_in_file(config.LOG_FILENAME,  "a+", get_prefix_log() + "Server " + server_number + " pinged by watchdog\n")
-                    conn.sendall("up".encode())
+                    write_in_file(config.LOG_FILENAME, "a+",
+                                  get_prefix_log() + "Server " + server_number + " pinged by watchdog\n")
+                    conn.sendall(str("Server " + server_number + " up").encode())
 
             except Exception as e:
                 console.print(e.__str__(), style=style_error)
@@ -116,7 +118,6 @@ def launch_socket(ip, port, server_number):
 
 
 def main():
-
     pathtube1 = "/tmp/tubenommeprincipalsecond"
     pathtube2 = "/tmp/tubenommesecondprincipal"
 
@@ -126,6 +127,7 @@ def main():
     try:
         console.print("Création du segment mémoire partagée", style="yellow")
         shared_memory.SharedMemory(name='shm_osps', create=True, size=10)
+        os.remove(config.LOG_FILENAME)
     except Exception as e:
         console.print(e.__str__(), style=style_error)
 
@@ -140,18 +142,18 @@ def main():
         elif pid == 0:
 
             worker1 = threading.Thread(target=launch_socket, args=[config.SERVER_ONE_IP, config.SERVER_ONE_PORT, "1"])
-            worker1.daemon = False
+            worker1.daemon = True
             worker1.start()
 
             main_server(pathtube1, pathtube2)
 
         else:
 
-           worker2 = threading.Thread(target=launch_socket, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
-           worker2.daemon = False
-           worker2.start()
+            worker2 = threading.Thread(target=launch_socket, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
+            worker2.daemon = True
+            worker2.start()
 
-           secondary_server(pathtube1, pathtube2)
+            secondary_server(pathtube1, pathtube2)
 
     except Exception as e:
         console.print(e.__str__(), style=style_error)
