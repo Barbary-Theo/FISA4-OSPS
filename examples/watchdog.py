@@ -7,6 +7,7 @@ import config
 
 console = console.Console()
 
+error_communication_text = "Impossible de se connecter au serveur "
 
 def watchdog_server_one(ip, port):
 
@@ -19,18 +20,20 @@ def watchdog_server_one(ip, port):
             try:
                 s_serv_one.sendall("Hello, world".encode())
                 data = s_serv_one.recv(1024)
-                print("Received data -> " + data.decode().__str__())
+
+                if data.decode().__str__() == "":
+                    console.print(error_communication_text + "1", style="red")
+                    break
+                else:
+                    print("Received data -> " + data.decode().__str__())
 
                 time.sleep(2)
 
-            except Exception as e:
+            except Exception:
+                console.print(error_communication_text + "1", style="red")
                 break
-    except Exception as e:
-        if e.__str__().__contains__("Connection refused"):
-            console.print("Impossible de se connecter au socket server 1", style="red")
-        else:
-            print(e.__str__())
-            console.print("socket server 1 error", style="red")
+    except Exception:
+        console.print("Impossible de se connecter au socket server 1", style="red")
 
 
 def watchdog_server_two(ip, port):
@@ -44,18 +47,20 @@ def watchdog_server_two(ip, port):
             try:
                 s_serv_two.sendall("Hello, world".encode())
                 data = s_serv_two.recv(1024)
-                print("Received data -> " + data.decode().__str__())
+
+                if data.decode().__str__() == "":
+                    console.print(error_communication_text + "2", style="red")
+                    break
+                else:
+                    print("Received data -> " + data.decode().__str__())
 
                 time.sleep(2)
 
-            except Exception as e:
+            except Exception:
+                console.print(error_communication_text + "2", style="red")
                 break
-    except Exception as e:
-        if e.__str__().__contains__("Connection refused"):
-            console.print("Impossible de se connecter au socket server 2", style="red")
-        else:
-            print(e.__str__())
-            console.print("socket server 2 error", style="red")
+    except Exception:
+        console.print("Impossible de se connecter au socket server 2", style="red")
 
 
 def join(worker):
@@ -64,6 +69,8 @@ def join(worker):
 
 
 def launch_watchdog():
+
+    time.sleep(1)
 
     worker_server_one = threading.Thread(target=watchdog_server_one, args=[config.SERVER_ONE_IP, config.SERVER_ONE_PORT])
     worker_server_one.daemon = True

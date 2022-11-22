@@ -40,7 +40,7 @@ def main_server(pathtube1, pathtube2):
 
             text_to_write = input("Serveur 1 doit écrire -> ")
 
-            shm_segment1.buf[:len(text_to_write)] = bytearray([ord(value) for value in text_to_write])
+            shm_segment1.buf[:len(text_to_write)] = bytearray(text_to_write.encode())
 
             console.print("Serveur 1 a écrit " + text_to_write, style="blue")
             fifo1.write(str(len(text_to_write)) + "\n")
@@ -51,7 +51,7 @@ def main_server(pathtube1, pathtube2):
 
             fifo1.flush()
 
-            text_read = fifo2.readline().replace("\n", "")
+            text_read = bytes(fifo2.readline()).decode().replace("\n", "")
 
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 read '" + text_read + "'\n")
 
@@ -76,10 +76,10 @@ def secondary_server(pathtube1, pathtube2):
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
             write_in_file(config.LOG_FILENAME, "a+",
-                          get_prefix_log() + "Server 2 read '" + str(shared_memory_text) + "'\n")
+                          get_prefix_log() + "Server 2 read '" + bytes(shared_memory_text).decode() + "'\n")
 
             console.print(
-                "Contenu du segment mémoire partagée en octets via second accès : " + shared_memory_text.__str__(),
+                "Contenu du segment mémoire partagée en octets via second accès : " + bytes(shared_memory_text).decode(),
                 style="green")
 
             sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
@@ -91,7 +91,7 @@ def secondary_server(pathtube1, pathtube2):
 
             fifo2.flush()
 
-        except  Exception:
+        except Exception:
             write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 looks like down\n")
 
 
@@ -100,7 +100,7 @@ def launch_socket(ip, port, server_number):
         s.bind((ip, port))
         s.listen()
         conn, addr = s.accept()
-        console.print("Watchdog server " + server_number + "connected by " + addr.__str__(), style=style_error)
+        console.print("\n Watchdog server " + server_number + " connected by " + addr.__str__(), style=style_error)
 
         while True:
             try:
