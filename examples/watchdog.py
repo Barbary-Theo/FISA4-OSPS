@@ -25,7 +25,7 @@ def watchdog_server_one(ip, port):
                 s_serv_one.sendall(config.MESSAGE_PING_ERROR.encode() if error_on_a_server else "ALIVE".encode())
 
                 if error_on_a_server:
-                    os._exit(0)
+                    sys.exit(1)
 
                 data = s_serv_one.recv(1024)
 
@@ -60,7 +60,7 @@ def watchdog_server_two(ip, port):
                 s_serv_two.sendall(config.MESSAGE_PING_ERROR.encode() if error_on_a_server else "ALIVE".encode())
 
                 if error_on_a_server:
-                    os._exit(0)
+                    sys.exit(1)
 
                 data = s_serv_two.recv(1024)
 
