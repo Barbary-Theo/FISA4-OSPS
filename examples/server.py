@@ -116,7 +116,7 @@ def launch_socket(ip, port, server_number):
             s.bind((ip, port))
             s.listen()
             conn, addr = s.accept()
-            console.print("\n Watchdog server " + server_number + " connected by " + addr.__str__(), style=style_error)
+            console.print("\n Watchdog server " + server_number + " connected by " + addr.__str__(), style="yellow")
 
             while True:
                 try:
