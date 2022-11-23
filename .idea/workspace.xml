@@ -5,7 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/watchdog.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/watchdog.py" afterDir="false" />
     </list>
     <list id="5bb6aec6-94fc-498d-964e-9b3ff6b5c3aa" name="Changes by theobabrary" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -213,38 +212,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>138</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>189</line>
-          <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>143</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>96</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>176</line>
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>186</line>
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -263,6 +230,6 @@
     <SUITE FILE_PATH="coverage/fisa4_osps$pairetubesnommesprocessalancerenpremier.coverage" NAME="pairetubesnommesprocessalancerenpremier Coverage Results" MODIFIED="1664526759287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/fisa4_osps$pairesTubesNommesProcess.coverage" NAME="pairesTubesNommesProcess Coverage Results" MODIFIED="1664528088771" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/fisa4_osps$server_test.coverage" NAME="server-test Coverage Results" MODIFIED="1669026618623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/fisa4_osps$server__1_.coverage" NAME="server (1) Coverage Results" MODIFIED="1669223506387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/fisa4_osps$server__1_.coverage" NAME="server (1) Coverage Results" MODIFIED="1669233069406" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
 </project>

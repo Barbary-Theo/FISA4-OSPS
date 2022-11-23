@@ -110,7 +110,7 @@ def there_is_error_on_server(server_number, error_server_one, error_server_two, 
            or (bytes(data).decode() == config.MESSAGE_PING_ERROR)
 
 
-def launch_socket(ip, port, server_number):
+def launch_socket_for_watchdog(ip, port, server_number):
     global error_on_server_one
     global error_on_server_two
 
@@ -143,6 +143,54 @@ def launch_socket(ip, port, server_number):
         console.print(e.__str__(), style=style_error)
 
 
+def socket_with_client():
+    try:
+        with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
+            s.bind((config.SERVER_ONE_CLIENT_IP, config.SERVER_ONE_CLIENT_PORT))
+            s.listen()
+            conn, addr = s.accept()
+            console.print("\n Client connected on server 1 by " + addr.__str__(), style="yellow")
+
+            while True:
+                try:
+                    data = conn.recv(1024)
+                    if data:
+                        conn.sendall((str(config.SERVER_TWO_CLIENT_IP) + " " + str(config.SERVER_TWO_CLIENT_PORT)).encode())
+
+                except Exception as e:
+                    console.print(e.__str__(), style=style_error)
+                    conn.close()
+                    s.detach()
+                    s.close()
+                    break
+    except Exception as e:
+        console .print(e.__str__(), style=style_error)
+
+
+def socket_server_2_with_client():
+    try:
+        with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
+            s.bind((config.SERVER_TWO_CLIENT_IP, config.SERVER_TWO_CLIENT_PORT))
+            s.listen()
+            conn, addr = s.accept()
+            console.print("\n Client connected on server 2 by " + addr.__str__(), style="yellow")
+
+            while True:
+                try:
+                    data = conn.recv(1024)
+                    if data:
+                        conn.sendall("J'ai rien à te dire ...".encode())
+
+                except Exception as e:
+                    console.print(e.__str__(), style=style_error)
+                    conn.close()
+                    s.detach()
+                    s.close()
+
+    except Exception as e:
+        console .print(e.__str__(), style=style_error)
+
+
 def main():
     global error_on_server_one
     global error_on_server_two
@@ -165,9 +213,13 @@ def main():
             console.print("⚠️ Error during fork ⚠️", style=style_error)
 
         elif pid == 0:
-            worker1 = threading.Thread(target=launch_socket, args=[config.SERVER_ONE_IP, config.SERVER_ONE_PORT, "1"])
-            worker1.daemon = False
-            worker1.start()
+            worker_watchdog = threading.Thread(target=launch_socket_for_watchdog, args=[config.SERVER_ONE_IP, config.SERVER_ONE_PORT, "1"])
+            worker_watchdog.daemon = False
+            worker_watchdog.start()
+
+            worker_client = threading.Thread(target=socket_with_client, args=[])
+            worker_client.daemon = False
+            worker_client.start()
 
             main_server(pathtube1, pathtube2)
 
@@ -175,9 +227,13 @@ def main():
             error_on_server_one = True
 
         else:
-            worker2 = threading.Thread(target=launch_socket, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
+            worker2 = threading.Thread(target=launch_socket_for_watchdog, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
             worker2.daemon = False
             worker2.start()
+
+            worker_client = threading.Thread(target=socket_server_2_with_client, args=[])
+            worker_client.daemon = False
+            worker_client.start()
 
             secondary_server(pathtube1, pathtube2)
 
