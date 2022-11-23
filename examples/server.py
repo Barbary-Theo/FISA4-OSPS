@@ -12,6 +12,8 @@ from rich import console
 
 console = console.Console()
 style_error = config.COLOR_ERROR
+color_server_one = config.COLOR_SERVER_ONE
+color_server_two = config.COLOR_SERVER_TWO
 
 error_on_server_one = False
 error_on_server_two = False
@@ -42,19 +44,19 @@ def main_server(pathtube1, pathtube2):
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            console.print("Server 1 doit écrire -> ", style="green")
+            console.print("Server 1 doit écrire -> ", style=color_server_one)
             text_to_write = input()
 
             shm_segment1.buf[:len(text_to_write)] = bytearray(text_to_write.encode('utf-8'))
 
-            console.print("Serveur 1 a écrit", style="green")
+            console.print("Serveur 1 a écrit", style=color_server_one)
             fifo1.write(str(len(text_to_write)) + "\n")
 
             fifo1.flush()
 
             text_read = fifo2.readline().replace("\n", "")
 
-            console.print("Serveur 1 à lu : " + text_read, style="green")
+            console.print("Serveur 1 à lu : " + text_read, style=color_server_one)
 
             i += 1
             if i == 3:
@@ -82,14 +84,14 @@ def secondary_server(pathtube1, pathtube2):
 
             length = fifo1.readline().replace("\n", "")
 
-            console.print("Serveur 2 à lu la taille : " + str(length), style="cyan")
+            console.print("Serveur 2 à lu la taille : " + str(length), style=color_server_two)
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
-            console.print('Contenu du segment mémoire partagée en octets via second accès : ' + shared_memory_text.decode(), style="cyan")
+            console.print('Contenu du segment mémoire partagée en octets via second accès : ' + shared_memory_text.decode(), style=color_server_two)
 
             sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
 
-            console.print("Serveur 2 a écrit", style="cyan")
+            console.print("Serveur 2 a écrit", style=color_server_two)
             fifo2.write("I read\n")
 
             fifo2.flush()

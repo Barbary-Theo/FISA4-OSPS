@@ -10,7 +10,10 @@ console = console.Console()
 
 error_communication_text = "Impossible de se connecter au serveur "
 error_on_a_server = False
+
 style_error = config.COLOR_ERROR
+color_server_one = config.COLOR_SERVER_ONE
+color_server_two = config.COLOR_SERVER_TWO
 
 
 def stop_other_server_text(server_number):
@@ -18,7 +21,7 @@ def stop_other_server_text(server_number):
 
 
 def get_server_style(server_number):
-    return "green" if server_number == "1" else "cyan"
+    return color_server_one if server_number == "1" else color_server_two
 
 
 def watchdog_server(ip, port, server_number):
