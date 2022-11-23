@@ -12,7 +12,9 @@ from rich import console
 
 console = console.Console()
 style_error = "bold red"
-error_on_a_server = False
+
+error_on_server_one = False
+error_on_server_two = False
 
 
 def mkfifo(path):
@@ -47,20 +49,13 @@ def main_server(pathtube1, pathtube2):
             console.print("Serveur 1 a écrit " + text_to_write, style="blue")
             fifo1.write(str(len(text_to_write)) + "\n")
 
-            write_in_file(config.LOG_FILENAME, "a+",
-                          get_prefix_log() + "Server 1 wrote in pipe and shared memory text '" + text_to_write + "' with length of " + str(
-                              len(text_to_write)) + "\n")
-
             fifo1.flush()
 
             text_read = bytes(fifo2.readline()).decode().replace("\n", "")
 
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 read '" + text_read + "'\n")
-
             console.print("Serveur 1 a lu : " + text_read, style="blue")
 
         except Exception:
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 1 looks like down\n")
             break
 
 
@@ -78,9 +73,6 @@ def secondary_server(pathtube1, pathtube2):
             console.print("Serveur 2 a lu la taille : " + length, style="green")
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
-            write_in_file(config.LOG_FILENAME, "a+",
-                          get_prefix_log() + "Server 2 read '" + bytes(shared_memory_text).decode() + "'\n")
-
             console.print(
                 "Contenu du segment mémoire partagée en octets via second accès : " + bytes(shared_memory_text).decode(),
                 style="green")
@@ -90,17 +82,21 @@ def secondary_server(pathtube1, pathtube2):
             console.print("Serveur 2 a écrit", style="green")
             fifo2.write("I read\n")
 
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 wrote 'I read'\n")
-
             fifo2.flush()
 
         except Exception:
-            write_in_file(config.LOG_FILENAME, "a+", get_prefix_log() + "Server 2 looks like down\n")
             break
 
 
+def there_is_error_on_server(server_number, error_on_server_one, error_on_server_two, data):
+    return (server_number == "1" and error_on_server_one) \
+           or (server_number == "2" and error_on_server_two) \
+           or (bytes(data).decode() == config.MESSAGE_PING_ERROR)
+
+
 def launch_socket(ip, port, server_number):
-    global error_on_a_server
+    global error_on_server_one
+    global error_on_server_two
 
     try:
         with soc.socket(soc.AF_INET, soc.SOCK_STREAM) as s:
@@ -113,10 +109,8 @@ def launch_socket(ip, port, server_number):
                 try:
                     data = conn.recv(1024)
                     if data:
-                        write_in_file(config.LOG_FILENAME, "a+",
-                                      get_prefix_log() + "Server " + server_number + " pinged by watchdog\n")
 
-                        if error_on_a_server or bytes(data).decode() == config.MESSAGE_PING_ERROR:
+                        if there_is_error_on_server(server_number, error_on_server_one, error_on_server_two, data):
                            os._exit(0)
 
                         conn.sendall(str("Server " + server_number + " up").encode())
@@ -132,7 +126,9 @@ def launch_socket(ip, port, server_number):
 
 
 def main():
-    global error_on_a_server
+    global error_on_server_one
+    global error_on_server_two
+
     pathtube1 = "/tmp/tubenommeprincipalsecond"
     pathtube2 = "/tmp/tubenommesecondprincipal"
 
@@ -145,9 +141,6 @@ def main():
         os.remove(config.LOG_FILENAME)
     except Exception as e:
         console.print(e.__str__(), style=style_error)
-
-    with open("../files/servers.log", "w") as log:
-        log.write("")
 
     try:
         pid = os.fork()
@@ -162,7 +155,7 @@ def main():
             main_server(pathtube1, pathtube2)
 
             # Si on passe ici ça veut dire qu'il y a eu un problème dans le traitement serveur
-            error_on_a_server = True
+            error_on_server_one = True
 
         else:
             worker2 = threading.Thread(target=launch_socket, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
@@ -172,7 +165,7 @@ def main():
             secondary_server(pathtube1, pathtube2)
 
             # Si on passe ici ça veut dire qu'il y a eu un problème dans le traitement serveur
-            error_on_a_server = True
+            error_on_server_two = True
 
     except Exception as e:
         console.print(e.__str__(), style=style_error)
