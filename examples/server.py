@@ -31,6 +31,8 @@ def get_prefix_log():
 def main_server(pathtube1, pathtube2):
     shm_segment1 = shared_memory.SharedMemory("shm_osps")
 
+    i = 0
+
     fifo1 = None
     fifo2 = None
 
@@ -40,25 +42,28 @@ def main_server(pathtube1, pathtube2):
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            text_to_write = input("Server 1 have to write -> ")
+            text_to_write = input("Server 1 doit écrire -> ")
 
+            shm_segment1.buf[:len(text_to_write)] = bytearray(text_to_write.encode('utf-8'))
 
-            shm_segment1.buf[:len(text_to_write)] = bytearray([ord(value) for value in text_to_write])
-
-            print("Serveur 1 a écrit")
+            console.print("Serveur 1 a écrit", style="green")
             fifo1.write(str(len(text_to_write)) + "\n")
 
             fifo1.flush()
 
             text_read = fifo2.readline().replace("\n", "")
 
-            print("Serveur 1 à lu : ",  text_read)
+            console.print("Serveur 1 à lu : " + text_read, style="green")
+
+            i += 1
+            if i == 3:
+                int("er")
 
         except Exception as e:
             fifo1.close()
             fifo2.close()
             shm_segment1.close()
-            print(e)
+            console.print(e, style=style_error)
             break
 
 
@@ -76,24 +81,23 @@ def secondary_server(pathtube1, pathtube2):
 
             length = fifo1.readline().replace("\n", "")
 
-            print("Serveur 2 à lu la taille : ", length)
+            console.print("Serveur 2 à lu la taille : " + str(length), style="cyan")
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
-            print('Contenu du segment mémoire partagée en octets via second accès :', shared_memory_text)
+            console.print('Contenu du segment mémoire partagée en octets via second accès : ' + shared_memory_text.decode(), style="cyan")
 
             sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
 
-            print("Serveur 2 a écrit")
+            console.print("Serveur 2 a écrit", style="cyan")
             fifo2.write("I read\n")
 
             fifo2.flush()
-
 
         except Exception as e:
             fifo1.close()
             fifo2.close()
             shm_segment2.close()
-            print(e)
+            console.print(e, style=style_error)
             break
 
 
@@ -120,8 +124,7 @@ def launch_socket(ip, port, server_number):
                     if data:
 
                         if there_is_error_on_server(server_number, error_on_server_one, error_on_server_two, data):
-                            shared_memory.ShareableList.shm.close()
-                            os._exit(0)
+                            sys.exit(1)
 
                         conn.sendall(str("Server " + server_number + " up").encode())
 
