@@ -11,7 +11,7 @@ from datetime import datetime
 from rich import console
 
 console = console.Console()
-style_error = "bold red"
+style_error = config.COLOR_ERROR
 
 error_on_server_one = False
 error_on_server_two = False
@@ -42,7 +42,8 @@ def main_server(pathtube1, pathtube2):
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            text_to_write = input("Server 1 doit écrire -> ")
+            console.print("Server 1 doit écrire -> ", style="green")
+            text_to_write = input()
 
             shm_segment1.buf[:len(text_to_write)] = bytearray(text_to_write.encode('utf-8'))
 
@@ -59,11 +60,11 @@ def main_server(pathtube1, pathtube2):
             if i == 3:
                 int("er")
 
-        except Exception as e:
+        except Exception:
             fifo1.close()
             fifo2.close()
+            shm_segment1.unlink()
             shm_segment1.close()
-            console.print(e, style=style_error)
             break
 
 
@@ -93,11 +94,11 @@ def secondary_server(pathtube1, pathtube2):
 
             fifo2.flush()
 
-        except Exception as e:
+        except Exception:
             fifo1.close()
             fifo2.close()
+            shm_segment2.unlink()
             shm_segment2.close()
-            console.print(e, style=style_error)
             break
 
 
@@ -124,6 +125,8 @@ def launch_socket(ip, port, server_number):
                     if data:
 
                         if there_is_error_on_server(server_number, error_on_server_one, error_on_server_two, data):
+                            shared_memory.ShareableList.shm.unlink()
+                            shared_memory.ShareableList.shm.close()
                             sys.exit(1)
 
                         conn.sendall(str("Server " + server_number + " up").encode())

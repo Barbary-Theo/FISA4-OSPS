@@ -3,6 +3,7 @@ SERVER_TWO_INTERVAL_CHECKING = 2
 MESSAGE_PING_ERROR = "STOP"
 
 LOG_FILENAME = "../files/servers.log"
+COLOR_ERROR = "red bold"
 
 SERVER_ONE_IP = "localhost"
 SERVER_TWO_IP = "localhost"
