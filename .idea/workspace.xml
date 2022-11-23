@@ -4,6 +4,7 @@
     <list default="true" id="e0c44a4a-5504-47f3-b2b9-481375df785c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/servers.log" beforeDir="false" afterPath="$PROJECT_DIR$/files/servers.log" afterDir="false" />
     </list>
     <list id="5bb6aec6-94fc-498d-964e-9b3ff6b5c3aa" name="Changes by theobabrary" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,6 +38,7 @@
     "WebServerToolWindowFactoryState": "false",
     "dart.analysis.tool.window.visible": "false",
     "last_opened_file_path": "/Users/martinthibaut/Documents/FISA/S7/OSPS/PROJECT/fisa4-osps",
+    "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -50,7 +52,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.watchdog">
+  <component name="RunManager" selected="Python.server (1)">
     <configuration name="pairetubesnommesprocessalancerenpremier" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="fisa4-osps" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -163,8 +165,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.watchdog" />
         <item itemvalue="Python.server (1)" />
+        <item itemvalue="Python.watchdog" />
         <item itemvalue="Python.server" />
         <item itemvalue="Python.pairetubesnommesprocessalancerensecond" />
         <item itemvalue="Python.pairetubesnommesprocessalancerenpremier" />
@@ -190,7 +192,7 @@
       <workItem from="1665670516789" duration="40000" />
       <workItem from="1665673207850" duration="7921000" />
       <workItem from="1666699751989" duration="3865000" />
-      <workItem from="1669210028718" duration="445000" />
+      <workItem from="1669210028718" duration="6164000" />
     </task>
     <servers />
   </component>
@@ -213,23 +215,33 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>57</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>119</line>
+          <line>133</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/examples/server.py</url>
-          <line>44</line>
-          <option name="timeStamp" value="25" />
+          <line>184</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/examples/server.py</url>
+          <line>138</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/examples/server.py</url>
+          <line>93</line>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/examples/server.py</url>
+          <line>171</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/examples/server.py</url>
+          <line>181</line>
+          <option name="timeStamp" value="37" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -250,6 +262,6 @@
     <SUITE FILE_PATH="coverage/fisa4_osps$pairetubesnommesprocessalancerenpremier.coverage" NAME="pairetubesnommesprocessalancerenpremier Coverage Results" MODIFIED="1664526759287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/fisa4_osps$pairesTubesNommesProcess.coverage" NAME="pairesTubesNommesProcess Coverage Results" MODIFIED="1664528088771" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/fisa4_osps$server_test.coverage" NAME="server-test Coverage Results" MODIFIED="1669026618623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/fisa4_osps$server__1_.coverage" NAME="server (1) Coverage Results" MODIFIED="1669126298533" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/fisa4_osps$server__1_.coverage" NAME="server (1) Coverage Results" MODIFIED="1669213838253" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
   </component>
 </project>

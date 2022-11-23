@@ -28,13 +28,11 @@ def get_prefix_log():
     return "[" + datetime.now().strftime("%X") + "] "
 
 
-def write_in_file(file_name, mode, text):
-    with open(file_name, mode) as state_file:
-        state_file.write(text)
-
-
 def main_server(pathtube1, pathtube2):
     shm_segment1 = shared_memory.SharedMemory("shm_osps")
+
+    fifo1 = None
+    fifo2 = None
 
     while True:
 
@@ -42,25 +40,33 @@ def main_server(pathtube1, pathtube2):
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            text_to_write = input("Serveur 1 doit écrire -> ")
+            text_to_write = input("Server 1 have to write -> ")
 
-            shm_segment1.buf[:len(text_to_write)] = bytearray(text_to_write.encode())
 
-            console.print("Serveur 1 a écrit " + text_to_write, style="blue")
+            shm_segment1.buf[:len(text_to_write)] = bytearray([ord(value) for value in text_to_write])
+
+            print("Serveur 1 a écrit")
             fifo1.write(str(len(text_to_write)) + "\n")
 
             fifo1.flush()
 
-            text_read = bytes(fifo2.readline()).decode().replace("\n", "")
+            text_read = fifo2.readline().replace("\n", "")
 
-            console.print("Serveur 1 a lu : " + text_read, style="blue")
+            print("Serveur 1 à lu : ",  text_read)
 
-        except Exception:
+        except Exception as e:
+            fifo1.close()
+            fifo2.close()
+            shm_segment1.close()
+            print(e)
             break
 
 
 def secondary_server(pathtube1, pathtube2):
     shm_segment2 = shared_memory.SharedMemory("shm_osps")
+
+    fifo1 = None
+    fifo2 = None
 
     while True:
 
@@ -70,27 +76,30 @@ def secondary_server(pathtube1, pathtube2):
 
             length = fifo1.readline().replace("\n", "")
 
-            console.print("Serveur 2 a lu la taille : " + length, style="green")
+            print("Serveur 2 à lu la taille : ", length)
             shared_memory_text = bytes(shm_segment2.buf[:int(length)])
 
-            console.print(
-                "Contenu du segment mémoire partagée en octets via second accès : " + bytes(shared_memory_text).decode(),
-                style="green")
+            print('Contenu du segment mémoire partagée en octets via second accès :', shared_memory_text)
 
             sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
 
-            console.print("Serveur 2 a écrit", style="green")
+            print("Serveur 2 a écrit")
             fifo2.write("I read\n")
 
             fifo2.flush()
 
-        except Exception:
+
+        except Exception as e:
+            fifo1.close()
+            fifo2.close()
+            shm_segment2.close()
+            print(e)
             break
 
 
-def there_is_error_on_server(server_number, error_on_server_one, error_on_server_two, data):
-    return (server_number == "1" and error_on_server_one) \
-           or (server_number == "2" and error_on_server_two) \
+def there_is_error_on_server(server_number, error_server_one, error_server_two, data):
+    return (server_number == "1" and error_server_one) \
+           or (server_number == "2" and error_server_two) \
            or (bytes(data).decode() == config.MESSAGE_PING_ERROR)
 
 
@@ -111,7 +120,8 @@ def launch_socket(ip, port, server_number):
                     if data:
 
                         if there_is_error_on_server(server_number, error_on_server_one, error_on_server_two, data):
-                           os._exit(0)
+                            shared_memory.ShareableList.shm.close()
+                            os._exit(0)
 
                         conn.sendall(str("Server " + server_number + " up").encode())
 
@@ -138,7 +148,6 @@ def main():
     try:
         console.print("Création du segment mémoire partagée", style="yellow")
         shared_memory.SharedMemory(name='shm_osps', create=True, size=10)
-        os.remove(config.LOG_FILENAME)
     except Exception as e:
         console.print(e.__str__(), style=style_error)
 
@@ -149,7 +158,7 @@ def main():
 
         elif pid == 0:
             worker1 = threading.Thread(target=launch_socket, args=[config.SERVER_ONE_IP, config.SERVER_ONE_PORT, "1"])
-            worker1.daemon = True
+            worker1.daemon = False
             worker1.start()
 
             main_server(pathtube1, pathtube2)
@@ -159,7 +168,7 @@ def main():
 
         else:
             worker2 = threading.Thread(target=launch_socket, args=[config.SERVER_TWO_IP, config.SERVER_TWO_PORT, "2"])
-            worker2.daemon = True
+            worker2.daemon = False
             worker2.start()
 
             secondary_server(pathtube1, pathtube2)
