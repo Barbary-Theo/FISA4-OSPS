@@ -1,4 +1,6 @@
 import os
+import random
+import string
 import sys
 import threading
 import socket as soc
@@ -44,8 +46,8 @@ def main_server(pathtube1, pathtube2):
             fifo1 = open(pathtube1, "w")
             fifo2 = open(pathtube2, "r")
 
-            console.print("Server 1 doit écrire -> ", style=color_server_one)
-            text_to_write = input()
+            sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
+            text_to_write = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
             shm_segment1.buf[:len(text_to_write)] = bytearray(text_to_write.encode('utf-8'))
 
@@ -92,7 +94,7 @@ def secondary_server(pathtube1, pathtube2):
             sleep(randint(0, config.SERVER_TWO_INTERVAL_CHECKING))
 
             console.print("Serveur 2 a écrit", style=color_server_two)
-            fifo2.write("I read\n")
+            fifo2.write(''.join(random.choices(string.ascii_uppercase + string.digits, k=10)))
 
             fifo2.flush()
 
