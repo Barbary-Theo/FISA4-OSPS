@@ -35,7 +35,6 @@ def get_prefix_log():
 def main_server(pathtube1, pathtube2):
     shm_segment1 = shared_memory.SharedMemory("shm_osps")
 
-    i = 0
 
     fifo1 = None
     fifo2 = None
@@ -59,10 +58,6 @@ def main_server(pathtube1, pathtube2):
             text_read = fifo2.readline().replace("\n", "")
 
             console.print("Serveur 1 à lu : " + text_read, style=color_server_one)
-
-            i += 1
-            if i == 3:
-                int("er")
 
         except Exception:
             fifo1.close()
