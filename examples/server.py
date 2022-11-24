@@ -22,6 +22,7 @@ error_on_server_two = False
 
 # !!!!!!!!!! ⚠️ ⚠️ Attention ⚠️ ⚠️ !!!!!!!!!!
 # Lire le readme.mb pour plus d'explication du lancement
+# Mais en gros lancer : 1) server.py | 2) watchdog.py | 3) client.py
 
 
 # Création des tubes
