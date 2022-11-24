@@ -7,10 +7,17 @@ console = console.Console()
 style_error = config.COLOR_ERROR
 
 
+to_serv_two = None
+
+
 def client_serv_two(server):
+
+    global to_serv_two
+
     try:
-        to_serv_two = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        to_serv_two.connect((server[0], int(server[1])))
+        if to_serv_two is None:
+            to_serv_two = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            to_serv_two.connect((server[0], int(server[1])))
 
         while True:
 
@@ -33,10 +40,12 @@ def client_serv_two(server):
 
 def client_serv_one():
     try:
+
+        to_serv_one = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        to_serv_one.connect((config.SERVER_ONE_CLIENT_IP, config.SERVER_ONE_CLIENT_PORT))
+
         while True:
 
-            to_serv_one = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            to_serv_one.connect((config.SERVER_ONE_CLIENT_IP, config.SERVER_ONE_CLIENT_PORT))
             text_serv_one = input("Bienvenu sur le serveur 1, écrivez STOP pour quitter -> ")
 
             if text_serv_one.upper() == "STOP":
