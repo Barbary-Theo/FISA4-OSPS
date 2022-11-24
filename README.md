@@ -1,7 +1,7 @@
 # FISA4 - OSPS
 
 
-Projet OSP Théo BARBARY ⚙️ et Martin THIBAUT 🦋
+Projet OSPS Théo BARBARY ⚙️ et Martin THIBAUT 🦋
 
 ### Lancer le projet 
 
